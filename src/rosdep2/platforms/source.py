@@ -198,7 +198,7 @@ class SourceInstaller(PackageManagerInstaller):
         super(SourceInstaller, self).__init__(source_detect, supports_depends=True)
         self._rdmanifest_cache = {}
 
-    def resolve(self, rosdep_args):
+    def resolve(self, rosdep_args, rosdep=None):
         """
         :raises: :exc:`InvalidData` If format invalid or unable
           to retrieve rdmanifests.

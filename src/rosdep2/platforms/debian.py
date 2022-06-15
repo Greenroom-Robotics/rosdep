@@ -302,7 +302,7 @@ class AptInstaller(PackageManagerInstaller):
     def __init__(self):
         super(AptInstaller, self).__init__(dpkg_detect)
 
-    def resolve(self, rosdep_args):
+    def resolve(self, rosdep_args, rosdep=None):
         """
         See :meth:`Installer.resolve()`
         """
@@ -312,36 +312,34 @@ class AptInstaller(PackageManagerInstaller):
             if isinstance(packages, str):
                 packages = packages.split()
 
-            if 'version_dep' in rosdep_args:
-                rosdep = rosdep_args['version_dep']
-
-                # is this being passed Dependency objects instead of RosDep? Is this why it doesn't fail
-                if rosdep.version_eq:
-                    for i, package in list(enumerate(packages)):
-                        packages[i] = package + "=" + rosdep.version_eq
-                if rosdep.version_gte:
-                    raise InvalidData(
-                        "version_gte not supported for debian package: %s" % (rosdep)
-                    )
-                if rosdep.version_lte:
-                    raise InvalidData(
-                        "version_lte not supported for debian package: %s" % (rosdep)
-                    )
-                if rosdep.version_gt:
-                    raise InvalidData(
-                        "version_gt not supported for debian package: %s" % (rosdep)
-                    )
-                if rosdep.version_lt:
-                    raise InvalidData(
-                        "version_lt not supported for debian package: %s" % (rosdep)
-                    )
-
         elif isinstance(rosdep_args, str):
             packages = rosdep_args.split(" ")
         elif type(rosdep_args) == list:
             packages = rosdep_args
         else:
             raise InvalidData("Invalid rosdep args: %s" % (rosdep_args))
+
+        if rosdep:
+            # is this being passed Dependency objects instead of RosDep? Is this why it doesn't fail
+            if rosdep.version_eq:
+                for i, package in list(enumerate(packages)):
+                    packages[i] = package + "=" + rosdep.version_eq
+            if rosdep.version_gte:
+                raise InvalidData(
+                    "version_gte not supported for debian package: %s" % (rosdep)
+                )
+            if rosdep.version_lte:
+                raise InvalidData(
+                    "version_lte not supported for debian package: %s" % (rosdep)
+                )
+            if rosdep.version_gt:
+                raise InvalidData(
+                    "version_gt not supported for debian package: %s" % (rosdep)
+                )
+            if rosdep.version_lt:
+                raise InvalidData(
+                    "version_lt not supported for debian package: %s" % (rosdep)
+                )
 
         return packages
 

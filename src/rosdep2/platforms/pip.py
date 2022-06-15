@@ -133,7 +133,7 @@ class PipInstaller(PackageManagerInstaller):
     def __init__(self):
         super(PipInstaller, self).__init__(pip_detect, supports_depends=True)
 
-    def resolve(self, rosdep_args):
+    def resolve(self, rosdep_args, rosdep=None):
         """
         See :meth:`Installer.resolve()`
         """
@@ -143,42 +143,42 @@ class PipInstaller(PackageManagerInstaller):
             if isinstance(packages, str):
                 packages = packages.split()
 
-            if 'version_dep' in rosdep_args:
-                rosdep = rosdep_args['version_dep']
-                pip_specify_version = None
-                if rosdep.version_eq:
-                    for i, package in list(enumerate(packages)):
-                        packages[i] = package + '==' + rosdep.version_eq
-                    pip_specify_version = True
-                if rosdep.version_gte:
-                    for i, package in list(enumerate(packages)):
-                        package = package + ',' if pip_specify_version else package
-                        packages[i] = package + '>=' + rosdep.version_gte
-                    pip_specify_version = True
-                if rosdep.version_lte:
-                    for i, package in list(enumerate(packages)):
-                        package = package + ',' if pip_specify_version else package
-                        packages[i] = package + '<=' + rosdep.version_lte
-                    pip_specify_version = True
-                if rosdep.version_gt:
-                    for i, package in list(enumerate(packages)):
-                        package = package + ',' if pip_specify_version else package
-                        packages[i] = package + '>' + rosdep.version_gt
-                    pip_specify_version = True
-                if rosdep.version_lt:
-                    for i, package in list(enumerate(packages)):
-                        package = package + ',' if pip_specify_version else package
-                        packages[i] = package + '<' + rosdep.version_lt
-                    pip_specify_version = True
-                if pip_specify_version:
-                    for i, package in list(enumerate(packages)):
-                        packages[i] = package
         elif isinstance(rosdep_args, str):
             packages = rosdep_args.split(' ')
         elif type(rosdep_args) == list:
             packages = rosdep_args
         else:
             raise InvalidData('Invalid rosdep args: %s' % (rosdep_args))
+
+        if rosdep:
+            pip_specify_version = None
+            if rosdep.version_eq:
+                for i, package in list(enumerate(packages)):
+                    packages[i] = package + '==' + rosdep.version_eq
+                pip_specify_version = True
+            if rosdep.version_gte:
+                for i, package in list(enumerate(packages)):
+                    package = package + ',' if pip_specify_version else package
+                    packages[i] = package + '>=' + rosdep.version_gte
+                pip_specify_version = True
+            if rosdep.version_lte:
+                for i, package in list(enumerate(packages)):
+                    package = package + ',' if pip_specify_version else package
+                    packages[i] = package + '<=' + rosdep.version_lte
+                pip_specify_version = True
+            if rosdep.version_gt:
+                for i, package in list(enumerate(packages)):
+                    package = package + ',' if pip_specify_version else package
+                    packages[i] = package + '>' + rosdep.version_gt
+                pip_specify_version = True
+            if rosdep.version_lt:
+                for i, package in list(enumerate(packages)):
+                    package = package + ',' if pip_specify_version else package
+                    packages[i] = package + '<' + rosdep.version_lt
+                pip_specify_version = True
+            if pip_specify_version:
+                for i, package in list(enumerate(packages)):
+                    packages[i] = package
 
         return packages
 

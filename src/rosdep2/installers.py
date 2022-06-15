@@ -278,7 +278,7 @@ class Installer(object):
         """
         return []  # Default return empty list
 
-    def resolve(self, rosdep_args_dict):
+    def resolve(self, rosdep_args_dict, rosdep=None):
         """
         :param rosdep_args_dict: argument dictionary to the rosdep rule for this package manager
         :returns: [resolutions].  resolved objects should be printable to a user, but are otherwise opaque.
