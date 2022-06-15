@@ -336,7 +336,7 @@ class PackageManagerInstaller(Installer):
         """
         return (self.sudo_command.split() if self.as_root else []) + cmd
 
-    def resolve(self, rosdep_args):
+    def resolve(self, rosdep_args, rosdep=None):
         """
         See :meth:`Installer.resolve()`
         """
