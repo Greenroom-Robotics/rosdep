@@ -51,6 +51,8 @@ from .source import SOURCE_INSTALLER
 from ..installers import PackageManagerInstaller
 from ..shell_utils import read_stdout
 
+from catkin_pkg.package import Dependency
+
 # apt package manager key
 APT_INSTALLER = "apt"
 
@@ -319,8 +321,7 @@ class AptInstaller(PackageManagerInstaller):
         else:
             raise InvalidData("Invalid rosdep args: %s" % (rosdep_args))
 
-        if rosdep:
-            # is this being passed Dependency objects instead of RosDep? Is this why it doesn't fail
+        if rosdep and type(rosdep) == Dependency:
             if rosdep.version_eq:
                 for i, package in list(enumerate(packages)):
                     packages[i] = package + "=" + rosdep.version_eq
