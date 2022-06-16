@@ -362,7 +362,6 @@ class AptInstaller(PackageManagerInstaller):
         self, resolved, interactive=True, reinstall=False, quiet=False
     ):
         packages = self.get_packages_to_install(resolved, reinstall=reinstall)
-        print(packages)
         if not packages:
             return []
         base_cmd = ["apt-get", "install"]
