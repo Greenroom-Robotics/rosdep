@@ -32,6 +32,7 @@ from __future__ import print_function
 import os
 import subprocess
 import sys
+from packaging.version import Version
 
 try:
     import importlib.metadata as importlib_metadata
@@ -204,7 +205,7 @@ class PipInstaller(PackageManagerInstaller):
         if not packages:
             return []
         cmd = pip_cmd + ['install']
-        if float(importlib_metadata.version('pip')) >= 24.0:
+        if Version(importlib_metadata.version('pip')) >= Version("24.0"):
             cmd += ["--break-system-packages"]
         if quiet:
             cmd.append('-q')
