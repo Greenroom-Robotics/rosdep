@@ -1,3 +1,42 @@
+0.26.0 (2025-06-26)
+-------------------
+- Add search command for rosdep keys.
+  - https://github.com/ros-infrastructure/rosdep/issues/997
+- Remove unecessary global declarations.
+  - https://github.com/ros-infrastructure/rosdep/issues/1004
+- Update overview.rst to include search option.
+  - https://github.com/ros-infrastructure/rosdep/issues/1002
+- Use rosdep's reported platform for testing OS override.
+  - https://github.com/ros-infrastructure/rosdep/issues/996
+- Switch to supported mechanism to skip an unwanted test.
+  - https://github.com/ros-infrastructure/rosdep/issues/995
+- Ignore egg-info directories wherever they are found.
+  - https://github.com/ros-infrastructure/rosdep/issues/985
+
+0.25.1 (2024-08-22)
+-------------------
+- Update release environment to avoid using pkg_resources on later platforms.
+  - No source changes from 0.25.0.
+  - https://github.com/ros-infrastructure/rosdep/issues/982
+
+0.25.0 (2024-08-16)
+-------------------
+- Remove Python 2 release configuration.
+  - https://github.com/ros-infrastructure/rosdep/issues/970
+- Remove Python 2 compatibility imports.
+  - https://github.com/ros-infrastructure/rosdep/issues/973
+- Unpin flake8 version and resolve new violations.
+  - https://github.com/ros-infrastructure/rosdep/issues/975
+- Updates to pass flake8-builtins.
+  - https://github.com/ros-infrastructure/rosdep/issues/974
+- Updates to pass flake8-quotes.
+  - https://github.com/ros-infrastructure/rosdep/issues/972
+- Update documentation to recommend installing rosdep via sysem packages.
+  - https://github.com/ros-infrastructure/rosdep/issues/954
+- Check for pip configuration before installing into externally managed environment.
+  - https://github.com/ros-infrastructure/rosdep/issues/979
+  - See http://docs.ros.org/en/independent/api/rosdep/html/pip_and_pep_668.html for additional details.
+
 0.24.0 (2024-05-07)
 -------------------
 - Reapply "fix: pkg_resources deprecated warning"

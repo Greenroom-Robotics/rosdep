@@ -6,7 +6,7 @@ kwargs = {
     # same version as in:
     # - src/rosdep2/_version.py
     # - stdeb.cfg
-    'version': '0.24.0',
+    'version': '0.26.0',
     'packages': ['rosdep2', 'rosdep2.ament_packages', 'rosdep2.platforms'],
     'package_dir': {'': 'src'},
     'install_requires': [
@@ -16,8 +16,10 @@ kwargs = {
     'python_requires': '>=3.6',
     'extras_require': {
         'test': [
-            'flake8 < 6',
+            'flake8',
+            'flake8-builtins',
             'flake8-comprehensions',
+            'flake8-quotes',
             'pytest',
         ],
     },

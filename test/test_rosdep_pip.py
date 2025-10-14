@@ -109,6 +109,69 @@ def test_PackageManagerInstaller_resolve():
         pass
 
 
+@patch('rosdep2.platforms.pip.externally_managed_installable')
+def test_PipInstaller_handles_externally_managed_environment(externally_managed_installable):
+    from rosdep2 import InstallFailed
+    from rosdep2.platforms.pip import EXTERNALLY_MANAGED_EXPLAINER, PipInstaller
+
+    externally_managed_installable.return_value = False
+    installer = PipInstaller()
+    try:
+        installer.get_install_command(['whatever'])
+        assert False, 'should have raised'
+    except InstallFailed as e:
+        assert e.failures == [('pip', EXTERNALLY_MANAGED_EXPLAINER)]
+    externally_managed_installable.return_value = True
+    assert installer.get_install_command(['whatever'], interactive=False)
+
+
+@patch('rosdep2.platforms.pip.sys.version_info', new=(3, 11))
+@patch('rosdep2.platforms.pip.sys.prefix', sys.base_prefix)
+@patch.dict(os.environ, {'PIP_BREAK_SYSTEM_PACKAGES': '0'})
+def test_externally_managed_installable():
+    from rosdep2.platforms.pip import externally_managed_installable
+    assert externally_managed_installable() is False
+
+    @patch('rosdep2.platforms.pip.sys.version_info', new=(3, 10))
+    def test_last_exempt_version():
+        assert externally_managed_installable()
+
+    @patch('rosdep2.platforms.pip.sys.base_prefix', new='/some/other/path')
+    def test_virtual_environment():
+        assert externally_managed_installable()
+
+    @patch.dict(os.environ, {'PIP_BREAK_SYSTEM_PACKAGES': '1'})
+    def test_break_system_packages_env_var():
+        assert externally_managed_installable()
+
+    from configparser import ConfigParser
+    from pathlib import Path
+
+    @patch.object(ConfigParser, 'read')
+    @patch.object(ConfigParser, 'getboolean')
+    @patch.dict(os.environ, {'XDG_CONFIG_DIRS': '/xdg'})
+    def test_xdg_pip_dot_conf(getboolean, read):
+        getboolean.return_value = True
+        assert externally_managed_installable()
+        read.assert_called_once_with(Path('/xdg/pip/pip.conf'))
+        getboolean.assert_called_once_with('install', 'break-system-packages', fallback=False)
+
+    @patch.object(ConfigParser, 'read')
+    @patch.object(ConfigParser, 'getboolean')
+    def test_pip_dot_conf(getboolean, read):
+        getboolean.return_value = True
+        assert externally_managed_installable()
+        read.assert_called_once_with(Path('/etc/pip.conf'))
+        getboolean.assert_called_once_with('install', 'break-system-packages', fallback=False)
+
+    test_last_exempt_version()
+    test_virtual_environment()
+    test_break_system_packages_env_var()
+    test_xdg_pip_dot_conf()
+    test_pip_dot_conf()
+
+
+@patch.dict(os.environ, {'PIP_BREAK_SYSTEM_PACKAGES': '1'})
 def test_PipInstaller():
     from rosdep2 import InstallFailed
     from rosdep2.platforms.pip import PipInstaller
@@ -146,7 +209,7 @@ def test_PipInstaller():
     try:
         if hasattr(os, 'geteuid'):
             with patch('rosdep2.installers.os.geteuid', return_value=1):
-                test(['sudo', '-H'])
+                test(['sudo', '-H', '--preserve-env=PIP_BREAK_SYSTEM_PACKAGES'])
             with patch('rosdep2.installers.os.geteuid', return_value=0):
                 test([])
         else:
