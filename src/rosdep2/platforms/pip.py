@@ -127,9 +127,15 @@ def externally_managed_installable():
     pip_config.read(fallback_config)
     if pip_config.getboolean('install', 'break-system-packages', fallback=False):
         return True
-    # On Python 3.11 and later, when no explicit configuration is present,
-    # global pip installation will not work.
-    return False
+
+    # Check if the EXTERNALLY_MANAGED marker file exists. This file is created
+    # by OS package managers to indicate that Python packages are externally
+    # managed by the system. If the file exists, pip installation is blocked
+    # unless explicit configuration (above) allows it. Return True (installable)
+    # only if the file does NOT exist.
+    return not Path(
+        f'/usr/lib/python{sys.version_info.major}.{sys.version_info.minor}/EXTERNALLY_MANAGED'
+    ).is_file()
 
 
 def is_cmd_available(cmd):
